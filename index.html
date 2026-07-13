@@ -165,6 +165,13 @@
     color:var(--amber-d);margin-top:8px;}
   .hero p{font-size:14.5px;color:var(--sub);line-height:1.95;}
 
+  /* 海報歡迎頁 */
+  .welcome-card{padding:14px 14px 20px;text-align:center;}
+  .poster{display:block;width:100%;border-radius:18px;
+    box-shadow:0 12px 30px -8px rgba(110,80,40,.28);}
+  .welcome-line{font-family:var(--serif);font-size:15px;color:var(--green-deep);
+    margin:16px 0 4px;line-height:1.7;}
+
   /* 完整邀請文案 */
   .invite{text-align:center;}
   .story{margin:0 auto 16px;max-width:340px;}
@@ -230,39 +237,9 @@
 
       <!-- 歡迎 -->
       <section class="step active" data-step="welcome">
-        <div class="card hero invite">
-          <div class="emoji reveal">🌈🧵</div>
-          <h1 class="reveal">讓我們 <span class="g">LINE</span> 在一起<br><small>幸福同樂會</small></h1>
-
-          <div class="story reveal">
-            <p>有些人，是第一次來；<br>有些人，是好久沒回來。</p>
-            <p>但我們相信，<b>每一次相遇，<br>都可以是一個新的開始。</b></p>
-            <p>這個晚上，邀請你一起放下忙碌，透過有趣的互動、輕鬆的遊戲和真誠的交流，認識新的朋友，也重新連結熟悉的夥伴。</p>
-          </div>
-
-          <div class="twocard reveal">
-            <div class="tc first"><b>💛 第一次參加</b><span>不用擔心不熟、聽不懂，也不用害怕融不進來。我們準備了許多互動，陪你自然地認識大家。</span></div>
-            <div class="tc old"><b>💚 一路同行的夥伴</b><span>歡迎回來充充電，也把這份溫暖分享給第一次來的朋友，讓更多人感受到「回家」的感覺。</span></div>
-          </div>
-
-          <p class="story reveal" style="margin-bottom:6px;">因為幸福，不只是遇見對的人，更是和一群願意同行的人，<b>慢慢 LINE 在一起。</b></p>
-
-          <div class="tags reveal">
-            <span>🎈 有趣的互動</span><span>🎈 輕鬆的交流</span>
-            <span>🎈 溫暖的陪伴</span><span>🎈 幸福的回憶</span>
-          </div>
-
-          <div class="meta reveal">
-            <div class="m"><span class="i">📅</span><b>8/28（四）19:00–21:30<span>活動時間</span></b></div>
-            <div class="m"><span class="i">📍</span><b>幸福會館<span>台北市長春路 368 號 3 樓</span></b></div>
-            <div class="m"><span class="i">💝</span><b>$200<span>現場繳費・請自備現金</span></b></div>
-          </div>
-
-          <p class="story reveal" style="font-family:var(--serif);color:var(--green-deep);font-size:15px;margin-bottom:20px;">
-            也想想看，有沒有一位你希望邀請、一起來感受這份溫暖的人。<br>
-            期待我們一起 <b>LINE／賴</b> 在一起，連在一起。💚
-          </p>
-
+        <div class="card welcome-card">
+          <img class="poster reveal" src="poster.jpg" alt="幸福同樂會 新舊生回歸 報名海報" loading="eager">
+          <p class="welcome-line reveal">花 1 分鐘留下你的資訊，一起 LINE 在一起 💚</p>
           <div class="nav reveal"><button class="btn primary" onclick="next()">開始報名 →</button></div>
         </div>
       </section>
@@ -346,6 +323,23 @@
             <label class="opt"><span class="tx">有</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="gratitude" value="有"></label>
             <label class="opt"><span class="tx">沒有</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="gratitude" value="沒有"></label>
             <label class="opt"><span class="tx">我是新生（免填）</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="gratitude" value="新生免填"></label>
+          </div>
+          <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">下一步 →</button></div>
+        </div>
+      </section>
+
+      <!-- Q7 如何得知本活動 -->
+      <section class="step" data-step="q" data-required="source">
+        <div class="card">
+          <div class="qno reveal"><span class="n">7</span>問題 SEVEN</div>
+          <div class="qt reveal">你是從哪裡得知這場活動的？</div>
+          <div class="qhint reveal">幫助我們了解大家怎麼認識活動，作為之後推廣參考 💚</div>
+          <div class="opts reveal" data-name="source">
+            <label class="opt"><span class="tx">幸福體系群組</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="source" value="幸福體系群組"></label>
+            <label class="opt"><span class="tx">關懷員</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="source" value="關懷員"></label>
+            <label class="opt"><span class="tx">介紹人</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="source" value="介紹人"></label>
+            <label class="opt"><span class="tx">小天使</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="source" value="小天使"></label>
+            <label class="opt"><span class="tx">其他</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="source" value="其他"></label>
           </div>
           <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">看看確認 →</button></div>
         </div>
@@ -477,6 +471,7 @@
       ['小天使',radio('angel')],
       ['圓夢據計劃',radio('dream')],
       ['五感恩',radio('gratitude')],
+      ['如何得知',radio('source')],
     ];
     document.getElementById('summary').innerHTML=
       rows.map(r=>`<div class="r"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
@@ -493,6 +488,7 @@
       '身分':radio('studentType'), '輔導員':val('counselor'),
       '小天使':radio('angel'), '圓夢據計劃':radio('dream'),
       '五感恩':radio('gratitude'),
+      '如何得知本活動':radio('source'),
       '填寫時間':new Date().toLocaleString('zh-TW',{hour12:false})
     };
     try{
