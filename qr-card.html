@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>幸福同樂會｜報名 QR</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont@1.7.0/style.css">
+<style>
+  :root{--green:#06C755;--green-d:#04a94a;--green-deep:#0d5637;--amber:#f2b14a;--ink:#33291f;--sub:#8a7f6f;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'LXGW WenKai TC','Noto Sans TC',sans-serif;color:var(--ink);
+    background:#e9efe8;min-height:100vh;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:22px;padding:34px 16px;}
+
+  .card{width:420px;max-width:100%;background:
+      radial-gradient(circle at 15% 6%, rgba(6,199,85,.10), transparent 45%),
+      radial-gradient(circle at 88% 96%, rgba(242,177,74,.14), transparent 45%), #fffdf8;
+    border-radius:30px;overflow:hidden;box-shadow:0 26px 60px -14px rgba(90,70,40,.28);
+    text-align:center;}
+
+  .head{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;
+    padding:30px 26px 26px;position:relative;}
+  .head::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:22px;
+    background:#fffdf8;border-radius:50% 50% 0 0/100% 100% 0 0;}
+  .head .kick{font-size:14px;letter-spacing:.34em;font-weight:700;opacity:.95;margin-bottom:8px;}
+  .head h1{font-size:30px;font-weight:900;line-height:1.35;}
+  .head h1 small{display:block;font-size:15px;letter-spacing:.28em;margin-top:6px;opacity:.92;}
+
+  .body{padding:10px 30px 30px;}
+  .scan{font-size:21px;font-weight:900;color:var(--green-deep);margin:6px 0 4px;}
+  .scan .em{color:var(--amber);}
+  .sub{font-size:14px;color:var(--sub);margin-bottom:16px;}
+
+  .qrbox{display:inline-block;background:#fff;border:2px solid #e7ecdf;border-radius:22px;
+    padding:16px;box-shadow:0 10px 24px -8px rgba(90,70,40,.18);}
+  .qrbox img{display:block;width:230px;height:230px;}
+
+  .info{margin-top:20px;display:flex;flex-direction:column;gap:9px;text-align:left;}
+  .info .row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #eee4d4;
+    border-radius:13px;padding:11px 15px;}
+  .info .row .i{font-size:18px;}
+  .info .row b{font-size:15px;font-weight:900;}
+  .info .row b span{display:block;font-size:12.5px;color:var(--sub);font-weight:400;margin-top:1px;}
+
+  .foot{margin-top:16px;font-size:13px;color:var(--green-deep);line-height:1.7;}
+  .url{margin-top:8px;font-size:11px;color:#b6ab9a;word-break:break-all;font-family:'Noto Sans TC',sans-serif;}
+
+  .btns{display:flex;gap:10px;}
+  .btns button{font-family:'Noto Sans TC',sans-serif;cursor:pointer;border:none;font-weight:700;
+    font-size:14px;padding:11px 22px;border-radius:999px;background:var(--green);color:#fff;
+    box-shadow:0 8px 18px rgba(6,199,85,.25);}
+  .btns button.ghost{background:#fff;color:var(--green-d);border:1.5px solid var(--green);box-shadow:none;}
+
+  @media print{body{background:#fff;padding:0;gap:0;}.btns{display:none;}.card{box-shadow:none;}}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div class="kick">幸 福 同 樂 會</div>
+      <h1>讓我們 LINE 在一起<small>新舊生回歸・一起連線</small></h1>
+    </div>
+    <div class="body">
+      <div class="scan">📷 <span class="em">掃我</span>，立即報名</div>
+      <div class="sub">手機相機對準下方 QR code 即可填寫</div>
+      <div class="qrbox"><img src="qrcode.svg" alt="報名 QR code"></div>
+      <div class="info">
+        <div class="row"><span class="i">📅</span><b>8/28（五）18:45 開放入場<span>活動 19:00–21:30</span></b></div>
+        <div class="row"><span class="i">📍</span><b>幸福會館<span>台北市長春路 368 號 3 樓</span></b></div>
+        <div class="row"><span class="i">💝</span><b>$200<span>現場繳費・請自備現金</span></b></div>
+      </div>
+      <div class="foot">期待見到你，也期待一起迎接更多新的連結 ✨</div>
+      <div class="url">poiu0507-henji.github.io/line-tongle-signup</div>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button onclick="window.print()">🖨️ 列印 / 存 PDF</button>
+    <button class="ghost" onclick="window.open('qrcode.png')">開啟 QR 圖檔</button>
+  </div>
+</body>
+</html>
