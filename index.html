@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>幸福同樂會｜報名表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont@1.7.0/style.css">
+<style>
+  :root{
+    --green:#06C755;
+    --green-d:#04a94a;
+    --green-deep:#0d5637;
+    --amber:#f2b14a;
+    --amber-d:#e2951f;
+    --ink:#33291f;
+    --sub:#948877;
+    --line:#eadfce;
+    --ease:cubic-bezier(.16,1,.3,1);   /* easeOutExpo：快而順 */
+    --dur:.42s;
+    --sans:'Noto Sans TC',system-ui,sans-serif;
+    --serif:'LXGW WenKai TC',var(--serif);   /* 霞鶩文楷：溫潤手寫楷體 */
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:#fbf4e9;
+    overflow:hidden;
+    position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ===== 背景：溫馨科技 ===== */
+  .bg{position:fixed;inset:0;z-index:0;overflow:hidden;
+    background:
+      radial-gradient(1000px 700px at 12% 6%, rgba(6,199,85,.14), transparent 55%),
+      radial-gradient(900px 700px at 92% 96%, rgba(242,177,74,.20), transparent 55%),
+      linear-gradient(165deg,#fff8ee 0%,#f5ebda 100%);
+  }
+  .grid{position:absolute;inset:0;opacity:.45;
+    background-image:
+      linear-gradient(rgba(160,140,105,.12) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(160,140,105,.12) 1px,transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(circle at 50% 38%,#000,transparent 80%);
+            mask-image:radial-gradient(circle at 50% 38%,#000,transparent 80%);}
+  .orb{position:absolute;border-radius:50%;animation:float 9s var(--ease) infinite;}
+  @keyframes float{0%,100%{transform:translate(0,0);}50%{transform:translate(14px,-26px);}}
+
+  /* ===== 版面 ===== */
+  .wrap{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column;
+    max-width:500px;margin:0 auto;padding:0 20px;}
+
+  .top{padding-top:max(24px,env(safe-area-inset-top));flex:none;}
+  .brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+  .brand .name{font-weight:900;font-size:14.5px;letter-spacing:.05em;color:var(--green-deep);
+    display:flex;align-items:center;gap:8px;}
+  .brand .name .dot{width:9px;height:9px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 4px rgba(6,199,85,.16);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(6,199,85,.16);}50%{box-shadow:0 0 0 7px rgba(6,199,85,.05);}}
+  .brand .count{font-size:12.5px;font-weight:800;color:var(--sub);font-variant-numeric:tabular-nums;
+    letter-spacing:.04em;}
+  .bar{height:6px;background:#ece1d0;border-radius:999px;overflow:hidden;
+    box-shadow:inset 0 1px 2px rgba(120,95,55,.10);}
+  .bar span{display:block;height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,var(--green),var(--amber));
+    box-shadow:0 0 12px rgba(6,199,85,.4);
+    transition:width .5s var(--ease);}
+
+  /* ===== 舞台 & 換頁 ===== */
+  .stage{flex:1;position:relative;min-height:0;}
+  .step{position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:stretch;
+    overflow-y:auto;overflow-x:hidden;padding:14px 2px;
+    opacity:0;transform:translateX(42px) scale(.965);
+    transition:opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+    pointer-events:none;will-change:opacity,transform;}
+  .step>*{margin:auto 0;}                 /* 內容置中，過高時可捲動不裁切 */
+  .step.pre-left{opacity:0;transform:translateX(-42px) scale(.965);transition:none;}
+  .step.pre-right{opacity:0;transform:translateX(42px) scale(.965);transition:none;}
+  .step.active{opacity:1;transform:none;pointer-events:auto;z-index:2;}
+  .step.exit-left{opacity:0;transform:translateX(-42px) scale(.965);z-index:1;}
+  .step.exit-right{opacity:0;transform:translateX(42px) scale(.965);z-index:1;}
+
+  .card{background:rgba(255,255,255,.72);
+    backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);
+    border:1px solid rgba(255,255,255,.85);border-radius:26px;
+    box-shadow:0 24px 50px -12px rgba(110,80,40,.22), 0 2px 8px rgba(110,80,40,.06),
+               inset 0 1px 0 rgba(255,255,255,.7);
+    padding:32px 26px;}
+
+  /* 卡內容依序浮現 */
+  .step.active .reveal{animation:rise .55s var(--ease) both;}
+  .step.active .reveal:nth-child(1){animation-delay:.06s;}
+  .step.active .reveal:nth-child(2){animation-delay:.12s;}
+  .step.active .reveal:nth-child(3){animation-delay:.18s;}
+  .step.active .reveal:nth-child(4){animation-delay:.24s;}
+  .step.active .reveal:nth-child(5){animation-delay:.30s;}
+  .step.active .reveal:nth-child(6){animation-delay:.36s;}
+  @keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+
+  .qno{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:900;
+    letter-spacing:.18em;color:var(--green-d);margin-bottom:16px;}
+  .qno .n{display:inline-flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;
+    width:30px;height:30px;border-radius:10px;font-size:14px;letter-spacing:0;
+    box-shadow:0 6px 14px rgba(6,199,85,.3);}
+  .qt{font-family:var(--serif);font-weight:900;font-size:25px;line-height:1.5;
+    color:var(--ink);letter-spacing:.01em;margin-bottom:8px;}
+  .qhint{font-size:14px;color:var(--sub);margin-bottom:24px;line-height:1.75;}
+
+  .field{margin-bottom:15px;}
+  .field label{display:block;font-size:13px;font-weight:800;color:var(--green-deep);
+    margin-bottom:8px;letter-spacing:.02em;}
+  .field input{width:100%;font-family:inherit;font-size:16.5px;color:var(--ink);
+    background:rgba(255,255,255,.9);border:1.6px solid var(--line);border-radius:15px;
+    padding:15px 17px;outline:none;transition:.25s var(--ease);}
+  .field input:focus{border-color:var(--green);background:#fff;
+    box-shadow:0 0 0 4px rgba(6,199,85,.13);}
+  .field input::placeholder{color:#c8bda9;}
+
+  .opts{display:flex;flex-direction:column;gap:11px;}
+  .opt{position:relative;display:flex;align-items:center;gap:14px;cursor:pointer;
+    background:rgba(255,255,255,.9);border:1.6px solid var(--line);border-radius:17px;
+    padding:16px 18px;transition:.28s var(--ease);}
+  .opt:hover{border-color:#c9e6d1;transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(110,80,40,.08);}
+  .opt .tx{flex:1;font-size:16.5px;font-weight:600;color:var(--ink);}
+  .opt .mk{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid #dbcfba;
+    display:flex;align-items:center;justify-content:center;transition:.28s var(--ease);}
+  .opt .mk svg{width:13px;height:13px;stroke:#fff;stroke-width:3.4;fill:none;
+    stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .3s .05s var(--ease);}
+  .opt input{position:absolute;opacity:0;pointer-events:none;}
+  .opt.on{border-color:var(--green);
+    background:linear-gradient(135deg,#e9faef,#ffffff);
+    box-shadow:0 10px 22px rgba(6,199,85,.16);transform:translateY(-2px);}
+  .opt.on .mk{border-color:var(--green);background:var(--green);}
+  .opt.on .mk svg{stroke-dashoffset:0;}
+
+  .nav{display:flex;gap:11px;align-items:center;margin-top:24px;}
+  .btn{font-family:inherit;font-weight:900;cursor:pointer;border:none;transition:.22s var(--ease);}
+  .btn.primary{flex:1;font-size:16.5px;color:#fff;padding:16px;border-radius:15px;letter-spacing:.05em;
+    background:linear-gradient(135deg,var(--green) 0%,var(--green-d) 100%);
+    box-shadow:0 12px 24px -4px rgba(6,199,85,.45);}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 16px 30px -6px rgba(6,199,85,.5);}
+  .btn.primary:active{transform:translateY(0) scale(.98);}
+  .btn.back{flex:none;width:54px;height:54px;border-radius:15px;font-size:20px;color:var(--sub);
+    background:rgba(255,255,255,.85);border:1.6px solid var(--line);}
+  .btn.back:hover{color:var(--green-d);border-color:#c9e6d1;}
+
+  /* Hero（歡迎/完成/感謝）*/
+  .hero{text-align:center;}
+  .hero .emoji{font-size:50px;line-height:1;margin-bottom:10px;display:inline-block;
+    animation:pop .6s var(--ease) both;}
+  @keyframes pop{from{transform:scale(0) rotate(-12deg);opacity:0;}to{transform:none;opacity:1;}}
+  .hero h1{font-family:var(--serif);font-size:29px;font-weight:900;line-height:1.42;
+    color:var(--green-deep);margin-bottom:13px;letter-spacing:.01em;}
+  .hero h1 .g{color:var(--green-d);}
+  .hero h1 small{display:block;font-size:15px;font-weight:700;letter-spacing:.3em;
+    color:var(--amber-d);margin-top:8px;}
+  .hero p{font-size:14.5px;color:var(--sub);line-height:1.95;}
+
+  /* 完整邀請文案 */
+  .invite{text-align:center;}
+  .story{margin:0 auto 16px;max-width:340px;}
+  .story p{font-family:var(--serif);font-size:15.5px;line-height:2;color:#5a5041;margin-bottom:14px;}
+  .story p:last-child{margin-bottom:0;}
+  .story b{color:var(--green-deep);}
+  .twocard{display:flex;flex-direction:column;gap:11px;text-align:left;margin:6px 0 18px;}
+  .tc{border-radius:16px;padding:15px 17px;border:1px solid var(--line);}
+  .tc.first{background:linear-gradient(135deg,#fff7e6,#fffdf8);border-color:#f2e2bd;}
+  .tc.old{background:linear-gradient(135deg,#eafaef,#fbfffc);border-color:#c7e9cf;}
+  .tc b{display:block;font-size:15px;margin-bottom:5px;}
+  .tc.first b{color:var(--amber-d);} .tc.old b{color:var(--green-d);}
+  .tc span{font-size:13.5px;line-height:1.85;color:#6b6151;}
+  .tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:4px 0 20px;}
+  .tags span{font-size:13.5px;font-weight:700;color:var(--green-d);
+    background:linear-gradient(135deg,#eafaef,#fff);border:1.4px solid #bfe6c9;
+    border-radius:999px;padding:8px 15px;}
+  .meta{display:flex;flex-direction:column;gap:10px;margin:22px 0 24px;text-align:left;}
+  .meta .m{display:flex;align-items:center;gap:14px;
+    background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:15px;padding:13px 16px;}
+  .meta .m .i{font-size:20px;flex:none;}
+  .meta .m b{font-size:15px;font-weight:800;}
+  .meta .m b span{font-size:12.5px;color:var(--sub);font-weight:500;display:block;margin-top:2px;}
+
+  .summary{text-align:left;background:rgba(255,255,255,.92);border:1px solid var(--line);
+    border-radius:17px;padding:6px 18px;margin:22px 0 4px;}
+  .summary .r{display:flex;justify-content:space-between;gap:14px;padding:12px 0;
+    border-bottom:1px dashed var(--line);font-size:14.5px;}
+  .summary .r:last-child{border-bottom:none;}
+  .summary .r .k{color:var(--sub);flex:none;font-weight:500;}
+  .summary .r .v{font-weight:800;text-align:right;color:var(--ink);}
+
+  .foot{flex:none;text-align:center;font-size:11.5px;color:#bdb2a0;letter-spacing:.02em;
+    padding:12px 0 max(14px,env(safe-area-inset-bottom));}
+
+  .confetti{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;}
+  .confetti i{position:absolute;top:-16px;width:9px;height:15px;border-radius:2px;
+    animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(106vh) rotate(680deg);opacity:.85;}}
+
+  @media(max-height:700px){.qt{font-size:22px;}.card{padding:26px 22px;}.hero .emoji{font-size:42px;}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.08s!important;}}
+</style>
+</head>
+<body>
+  <div class="bg">
+    <div class="grid"></div>
+    <div class="orb" style="width:130px;height:130px;left:-34px;top:18%;background:radial-gradient(circle,#06C75530,transparent 70%);"></div>
+    <div class="orb" style="width:96px;height:96px;right:-24px;top:58%;background:radial-gradient(circle,#f2b14a40,transparent 70%);animation-duration:11s;"></div>
+    <div class="orb" style="width:64px;height:64px;left:22%;bottom:9%;background:radial-gradient(circle,#06C75522,transparent 70%);animation-duration:7.5s;"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="name"><span class="dot"></span>幸福同樂會 · 報名</div>
+        <div class="count" id="count">開始</div>
+      </div>
+      <div class="bar"><span id="progress"></span></div>
+    </div>
+
+    <div class="stage" id="stage">
+
+      <!-- 歡迎 -->
+      <section class="step active" data-step="welcome">
+        <div class="card hero invite">
+          <div class="emoji reveal">🌈🧵</div>
+          <h1 class="reveal">讓我們 <span class="g">LINE</span> 在一起<br><small>幸福同樂會</small></h1>
+
+          <div class="story reveal">
+            <p>有些人，是第一次來；<br>有些人，是好久沒回來。</p>
+            <p>但我們相信，<b>每一次相遇，<br>都可以是一個新的開始。</b></p>
+            <p>這個晚上，邀請你一起放下忙碌，透過有趣的互動、輕鬆的遊戲和真誠的交流，認識新的朋友，也重新連結熟悉的夥伴。</p>
+          </div>
+
+          <div class="twocard reveal">
+            <div class="tc first"><b>💛 第一次參加</b><span>不用擔心不熟、聽不懂，也不用害怕融不進來。我們準備了許多互動，陪你自然地認識大家。</span></div>
+            <div class="tc old"><b>💚 一路同行的夥伴</b><span>歡迎回來充充電，也把這份溫暖分享給第一次來的朋友，讓更多人感受到「回家」的感覺。</span></div>
+          </div>
+
+          <p class="story reveal" style="margin-bottom:6px;">因為幸福，不只是遇見對的人，更是和一群願意同行的人，<b>慢慢 LINE 在一起。</b></p>
+
+          <div class="tags reveal">
+            <span>🎈 有趣的互動</span><span>🎈 輕鬆的交流</span>
+            <span>🎈 溫暖的陪伴</span><span>🎈 幸福的回憶</span>
+          </div>
+
+          <div class="meta reveal">
+            <div class="m"><span class="i">📅</span><b>8/28（四）19:00–21:30<span>活動時間</span></b></div>
+            <div class="m"><span class="i">📍</span><b>幸福會館<span>台北市長春路 368 號 3 樓</span></b></div>
+            <div class="m"><span class="i">💝</span><b>$200<span>現場繳費・請自備現金</span></b></div>
+          </div>
+
+          <p class="story reveal" style="font-family:var(--serif);color:var(--green-deep);font-size:15px;margin-bottom:20px;">
+            也想想看，有沒有一位你希望邀請、一起來感受這份溫暖的人。<br>
+            期待我們一起 <b>LINE／賴</b> 在一起，連在一起。💚
+          </p>
+
+          <div class="nav reveal"><button class="btn primary" onclick="next()">開始報名 →</button></div>
+        </div>
+      </section>
+
+      <!-- Q1 -->
+      <section class="step" data-step="q" data-required="fullname">
+        <div class="card">
+          <div class="qno reveal"><span class="n">1</span>問題 ONE</div>
+          <div class="qt reveal">先讓我們認識你～</div>
+          <div class="qhint reveal">請填寫你的中文全名，還有大家常叫你的綽號。</div>
+          <div class="field reveal"><label>中文全名</label>
+            <input id="fullname" type="text" placeholder="例：王小美" autocomplete="off"></div>
+          <div class="field reveal"><label>綽號</label>
+            <input id="nickname" type="text" placeholder="例：小美" autocomplete="off"></div>
+          <div class="nav reveal">
+            <button class="btn back" onclick="prev()">←</button>
+            <button class="btn primary" onclick="next()">下一步 →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q2 -->
+      <section class="step" data-step="q" data-required="studentType">
+        <div class="card">
+          <div class="qno reveal"><span class="n">2</span>問題 TWO</div>
+          <div class="qt reveal">請問你是 8 月一階新生嗎？</div>
+          <div class="qhint reveal">選一個最符合你的身分。</div>
+          <div class="opts reveal" data-name="studentType">
+            <label class="opt"><span class="tx">我是 12 月新生</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="studentType" value="12月新生"></label>
+            <label class="opt"><span class="tx">我是舊生</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="studentType" value="舊生"></label>
+          </div>
+          <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">下一步 →</button></div>
+        </div>
+      </section>
+
+      <!-- Q3 -->
+      <section class="step" data-step="q" data-required="counselor">
+        <div class="card">
+          <div class="qno reveal"><span class="n">3</span>問題 THREE</div>
+          <div class="qt reveal">你的「輔導員」是誰呢？</div>
+          <div class="qhint reveal">填寫你輔導員的名字。</div>
+          <div class="field reveal"><label>輔導員姓名</label>
+            <input id="counselor" type="text" placeholder="請輸入輔導員姓名" autocomplete="off"></div>
+          <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">下一步 →</button></div>
+        </div>
+      </section>
+
+      <!-- Q4 -->
+      <section class="step" data-step="q" data-required="angel">
+        <div class="card">
+          <div class="qno reveal"><span class="n">4</span>問題 FOUR</div>
+          <div class="qt reveal">請問你是「小天使」嗎？</div>
+          <div class="opts reveal" data-name="angel">
+            <label class="opt"><span class="tx">是 · 我是小天使 😇</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="angel" value="是"></label>
+            <label class="opt"><span class="tx">不是</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="angel" value="否"></label>
+          </div>
+          <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">下一步 →</button></div>
+        </div>
+      </section>
+
+      <!-- Q5 -->
+      <section class="step" data-step="q" data-required="dream">
+        <div class="card">
+          <div class="qno reveal"><span class="n">5</span>問題 FIVE</div>
+          <div class="qt reveal">有沒有解過「圓夢據計劃」？</div>
+          <div class="opts reveal" data-name="dream">
+            <label class="opt"><span class="tx">有</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="dream" value="有"></label>
+            <label class="opt"><span class="tx">沒有</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="dream" value="沒有"></label>
+          </div>
+          <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">下一步 →</button></div>
+        </div>
+      </section>
+
+      <!-- Q6 -->
+      <section class="step" data-step="q" data-required="gratitude">
+        <div class="card">
+          <div class="qno reveal"><span class="n">6</span>問題 SIX</div>
+          <div class="qt reveal">五感恩是否每月 20 天以上，連續 3 個月？</div>
+          <div class="qhint reveal">此題為舊生填寫；新生可直接選「我是新生」。</div>
+          <div class="opts reveal" data-name="gratitude">
+            <label class="opt"><span class="tx">有</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="gratitude" value="有"></label>
+            <label class="opt"><span class="tx">沒有</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="gratitude" value="沒有"></label>
+            <label class="opt"><span class="tx">我是新生（免填）</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="gratitude" value="新生免填"></label>
+          </div>
+          <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">看看確認 →</button></div>
+        </div>
+      </section>
+
+      <!-- 確認 -->
+      <section class="step" data-step="done">
+        <div class="card hero">
+          <div class="emoji reveal">💚</div>
+          <h1 class="reveal">就差最後一步！</h1>
+          <p class="reveal">確認以下資訊沒問題，就送出報名吧～</p>
+          <div class="summary reveal" id="summary"></div>
+          <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" id="submitBtn" onclick="submitForm()">確認送出 ✓</button></div>
+        </div>
+      </section>
+
+      <!-- 感謝 -->
+      <section class="step" data-step="thanks">
+        <div class="card hero">
+          <div class="emoji reveal">🎉</div>
+          <h1 class="reveal">報名完成！<br><span class="g">我們 8/28 見 💚</span></h1>
+          <p class="reveal">謝謝你留下位子。<br>也想想看，有沒有一位你想邀請、<br>一起來感受這份溫暖的人？</p>
+          <div class="meta reveal">
+            <div class="m"><span class="i">📅</span><b>8/28（四）19:00–21:30<span>記得把時間留起來</span></b></div>
+            <div class="m"><span class="i">📍</span><b>幸福會館<span>台北市長春路 368 號 3 樓</span></b></div>
+          </div>
+          <div class="nav reveal"><button class="btn primary" onclick="restart()">再填一位夥伴 +</button></div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="foot">幸福同樂會 · 每一次相遇，都是新的開始</div>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+<script>
+  const steps = Array.from(document.querySelectorAll('.step'));
+  const qCount = steps.filter(s=>s.dataset.step==='q').length;
+  let idx = 0, animating = false;
+
+  const progress = document.getElementById('progress');
+  const countEl = document.getElementById('count');
+
+  function show(n, dir){
+    if(n===idx || animating) return;
+    animating = true;
+    const cur = steps[idx], nx = steps[n];
+
+    // 先把進來的頁面放到進場側（不觸發過渡）
+    nx.classList.remove('active','exit-left','exit-right');
+    nx.classList.add(dir==='fwd' ? 'pre-right' : 'pre-left');
+    void nx.offsetWidth;                       // 強制 reflow，動畫才會生效
+    nx.classList.remove('pre-right','pre-left');
+
+    // 出場 + 進場同時進行
+    cur.classList.remove('active');
+    cur.classList.add(dir==='fwd' ? 'exit-left' : 'exit-right');
+    nx.classList.add('active');
+    nx.scrollTop = 0;
+
+    idx = n;
+    updateProgress();
+
+    const inp = nx.querySelector('input[type=text]');
+    if(inp) setTimeout(()=>inp.focus({preventScroll:true}), 260);
+    setTimeout(()=>{ cur.classList.remove('exit-left','exit-right'); animating=false; }, 440);
+  }
+
+  function updateProgress(){
+    const s = steps[idx];
+    if(s.dataset.step==='q'){
+      const qi = steps.slice(0,idx+1).filter(x=>x.dataset.step==='q').length;
+      progress.style.width=(qi/qCount*100)+'%'; countEl.textContent=qi+' / '+qCount;
+    }else if(s.dataset.step==='welcome'){progress.style.width='0%';countEl.textContent='開始';}
+    else if(s.dataset.step==='done'){progress.style.width='100%';countEl.textContent='確認';}
+    else{progress.style.width='100%';countEl.textContent='完成';}
+  }
+
+  function validate(step){
+    const req=step.dataset.required; if(!req) return true;
+    if(req==='fullname') return document.getElementById('fullname').value.trim()?true:(shake(step),false);
+    if(req==='counselor') return document.getElementById('counselor').value.trim()?true:(shake(step),false);
+    return step.querySelector('input[name="'+req+'"]:checked')?true:(shake(step),false);
+  }
+  function shake(step){
+    step.querySelector('.card').animate(
+      [{transform:'translateX(0)'},{transform:'translateX(-9px)'},{transform:'translateX(9px)'},{transform:'translateX(-5px)'},{transform:'translateX(0)'}],
+      {duration:380,easing:'ease-in-out'});
+  }
+
+  function lastQIndex(){let l=0;steps.forEach((s,i)=>{if(s.dataset.step==='q')l=i;});return l;}
+
+  function next(){
+    const step=steps[idx];
+    if(!validate(step)) return;
+    if(step.dataset.step==='q' && idx===lastQIndex()) buildSummary();
+    show(Math.min(idx+1,steps.length-1),'fwd');
+  }
+  function prev(){ if(idx>0) show(idx-1,'back'); }
+
+  document.querySelectorAll('.opts').forEach(group=>{
+    group.querySelectorAll('.opt').forEach(opt=>{
+      opt.addEventListener('click',()=>{
+        group.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));
+        opt.classList.add('on');
+        opt.querySelector('input').checked=true;
+        setTimeout(next,300);           // 選完自動前進，順順的
+      });
+    });
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){const s=steps[idx];if(['welcome','q'].includes(s.dataset.step)){e.preventDefault();next();}}
+  });
+
+  const val=id=>document.getElementById(id).value.trim();
+  const radio=n=>{const c=document.querySelector('input[name="'+n+'"]:checked');return c?c.value:'（未填）';};
+
+  function buildSummary(){
+    const rows=[
+      ['姓名 / 綽號',(val('fullname')||'—')+'（'+(val('nickname')||'—')+'）'],
+      ['身分',radio('studentType')],
+      ['輔導員',val('counselor')||'—'],
+      ['小天使',radio('angel')],
+      ['圓夢據計劃',radio('dream')],
+      ['五感恩',radio('gratitude')],
+    ];
+    document.getElementById('summary').innerHTML=
+      rows.map(r=>`<div class="r"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
+  }
+
+  function submitForm(){
+    const data={fullname:val('fullname'),nickname:val('nickname'),studentType:radio('studentType'),
+      counselor:val('counselor'),angel:radio('angel'),dream:radio('dream'),gratitude:radio('gratitude')};
+    console.log('報名資料：',data);   // 之後可改成送出到後端 / Google 表單
+    show(idx+1,'fwd'); fireConfetti();
+  }
+
+  function restart(){
+    document.querySelectorAll('input').forEach(i=>{i.value='';i.checked=false;});
+    document.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));
+    show(1,'back');
+  }
+
+  function fireConfetti(){
+    const box=document.getElementById('confetti');
+    const colors=['#06C755','#f2b14a','#ff8fa3','#7ed4a0','#ffd66b'];
+    for(let i=0;i<72;i++){
+      const c=document.createElement('i');
+      c.style.left=Math.random()*100+'%';
+      c.style.background=colors[i%colors.length];
+      c.style.animationDuration=(2.2+Math.random()*1.8)+'s';
+      c.style.animationDelay=(Math.random()*.5)+'s';
+      c.style.transform='rotate('+Math.random()*360+'deg)';
+      box.appendChild(c); setTimeout(()=>c.remove(),4300);
+    }
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
