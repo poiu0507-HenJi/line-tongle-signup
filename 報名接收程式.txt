@@ -1,37 +1,45 @@
 幸福同樂會 報名表　Google Apps Script 接收程式
 （整段複製貼進 Apps Script 編輯器，取代原本內容）
-貼完後：部署 → 管理部署作業 → 鉛筆編輯 → 版本選「新版本」→ 部署（網址不變）
-存取權限要設：執行身分「我」、誰可以存取「所有人」
+
+重新部署步驟（很重要，兩件事一起做）：
+1. 貼上下面新程式碼，存檔
+2. 右上角 部署 → 管理部署作業 → 點鉛筆（編輯）
+3. 「誰可以存取」改成【任何人】← 這是關鍵，不然外面的人送不進來
+4. 版本選【新版本】→ 部署（網址不變）
+
+註：「任何人」才是連沒登入 Google 的人都能送；
+    不要選「擁有 Google 帳戶的任何人」，那樣沒登入的人一樣會失敗。
 
 ================================================================
 
 
-// 欄位順序（跟報名表送出的名稱一致，也會當成試算表標題列）
+// 欄位順序（跟報名表送出的名稱一致，也是試算表標題列）
 const HEADERS = ['姓名', '綽號', '身分', '輔導員', '小天使', '圓夢計劃', '五感恩', '如何得知本活動', '填寫時間'];
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
-  lock.tryLock(10000); // 避免多人同時送出時搶寫
+  lock.tryLock(15000); // 避免多人同時送出時搶寫
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
 
-    if (sheet.getLastRow() === 0) {
-      sheet.appendRow(HEADERS); // 第一次自動建立標題列
-    }
+    // 每次都把標題列寫成最新的（可自動修正欄位名稱，例如把舊錯字改掉）
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
 
     const p = (e && e.parameter) ? e.parameter : {};
     const now = Utilities.formatDate(new Date(), 'Asia/Taipei', 'yyyy/MM/dd HH:mm:ss');
 
     const row = HEADERS.map(function (h) {
-      if (h === '填寫時間') return p[h] || now;
-      return p[h] || '';
+      return (h === '填寫時間') ? (p[h] || now) : (p[h] || '');
     });
 
     sheet.appendRow(row);
-    return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
       .setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
