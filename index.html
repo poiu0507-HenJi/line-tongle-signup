@@ -384,6 +384,9 @@
   <div class="confetti" id="confetti"></div>
 
 <script>
+  // 送出目的地：Google Apps Script 網頁應用程式（資料寫入試算表）
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxh-jLp2LnboJ1O_iUa2lhXqIBf55JtUL8bHVxGdTL-iGzjG1iGUA_hSHRYiJW7UYVkYA/exec";
+
   const steps = Array.from(document.querySelectorAll('.step'));
   const qCount = steps.filter(s=>s.dataset.step==='q').length;
   let idx = 0, animating = false;
@@ -479,10 +482,25 @@
       rows.map(r=>`<div class="r"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
   }
 
-  function submitForm(){
-    const data={fullname:val('fullname'),nickname:val('nickname'),studentType:radio('studentType'),
-      counselor:val('counselor'),angel:radio('angel'),dream:radio('dream'),gratitude:radio('gratitude')};
-    console.log('報名資料：',data);   // 之後可改成送出到後端 / Google 表單
+  async function submitForm(){
+    const btn=document.getElementById('submitBtn');
+    if(btn.disabled) return;
+    btn.disabled=true; const label=btn.textContent; btn.textContent='送出中…';
+
+    // 欄位用中文鍵，方便試算表用標題對應
+    const data={
+      '姓名':val('fullname'), '綽號':val('nickname'),
+      '身分':radio('studentType'), '輔導員':val('counselor'),
+      '小天使':radio('angel'), '圓夢據計劃':radio('dream'),
+      '五感恩':radio('gratitude'),
+      '填寫時間':new Date().toLocaleString('zh-TW',{hour12:false})
+    };
+    try{
+      // Apps Script 需用表單格式（application/x-www-form-urlencoded），no-cors 直接送
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(data)});
+    }catch(e){ console.warn('送出發生問題（仍視為完成）：',e); }
+
+    btn.disabled=false; btn.textContent=label;
     show(idx+1,'fwd'); fireConfetti();
   }
 
