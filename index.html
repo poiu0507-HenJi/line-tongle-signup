@@ -456,7 +456,7 @@
         group.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));
         opt.classList.add('on');
         opt.querySelector('input').checked=true;
-        setTimeout(next,300);           // 選完自動前進，順順的
+        // 選完不自動前進，需按「下一步／確定」按鈕才換頁
       });
     });
   });
