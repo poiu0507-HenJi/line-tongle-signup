@@ -272,7 +272,7 @@
           <div class="qt reveal">請問你是 8 月一階新生嗎？</div>
           <div class="qhint reveal">選一個最符合你的身分。</div>
           <div class="opts reveal" data-name="studentType">
-            <label class="opt"><span class="tx">我是 12 月新生</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="studentType" value="12月新生"></label>
+            <label class="opt"><span class="tx">我是 8 月新生</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="studentType" value="8月新生"></label>
             <label class="opt"><span class="tx">我是舊生</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="studentType" value="舊生"></label>
           </div>
           <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">下一步 →</button></div>
@@ -283,10 +283,10 @@
       <section class="step" data-step="q" data-required="counselor">
         <div class="card">
           <div class="qno reveal"><span class="n">3</span>問題 THREE</div>
-          <div class="qt reveal">你的「輔導員」是誰呢？</div>
-          <div class="qhint reveal">填寫你輔導員的名字。</div>
-          <div class="field reveal"><label>輔導員姓名</label>
-            <input id="counselor" type="text" placeholder="請輸入輔導員姓名" autocomplete="off"></div>
+          <div class="qt reveal">你的「關懷員」是誰呢？</div>
+          <div class="qhint reveal">填寫你關懷員的名字。</div>
+          <div class="field reveal"><label>關懷員姓名</label>
+            <input id="counselor" type="text" placeholder="請輸入關懷員姓名" autocomplete="off"></div>
           <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">下一步 →</button></div>
         </div>
       </section>
@@ -345,6 +345,9 @@
             <label class="opt"><span class="tx">小天使</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="source" value="小天使"></label>
             <label class="opt"><span class="tx">其他</span><span class="mk"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.5"/></svg></span><input type="radio" name="source" value="其他"></label>
           </div>
+          <div class="field reveal" id="sourceOtherWrap" style="display:none;margin-top:13px;">
+            <label>請填寫來源</label>
+            <input id="sourceOther" type="text" placeholder="例：朋友分享、臉書貼文…" autocomplete="off"></div>
           <div class="nav reveal"><button class="btn back" onclick="prev()">←</button><button class="btn primary" onclick="next()">看看確認 →</button></div>
         </div>
       </section>
@@ -461,6 +464,23 @@
     });
   });
 
+  // Q7「其他」→ 顯示補充填寫欄，選其他選項時收合
+  // 註：選項是用程式打勾的，不會觸發 change，所以改監聽點擊
+  document.querySelectorAll('.opts[data-name="source"] .opt').forEach(opt=>{
+    opt.addEventListener('click',()=>{
+      const wrap=document.getElementById('sourceOtherWrap');
+      const isOther=opt.querySelector('input').value==='其他';
+      wrap.style.display=isOther?'block':'none';
+      if(isOther) setTimeout(()=>document.getElementById('sourceOther').focus({preventScroll:true}),120);
+    });
+  });
+  // 得知來源：選「其他」且有填字 → 「其他：xxx」
+  function sourceValue(){
+    const v=radio('source');
+    if(v==='其他'){ const t=val('sourceOther'); return t?('其他：'+t):'其他'; }
+    return v;
+  }
+
   document.addEventListener('keydown',e=>{
     if(e.key==='Enter'){const s=steps[idx];if(['welcome','q'].includes(s.dataset.step)){e.preventDefault();next();}}
   });
@@ -472,11 +492,11 @@
     const rows=[
       ['姓名 / 綽號',(val('fullname')||'—')+'（'+(val('nickname')||'—')+'）'],
       ['身分',radio('studentType')],
-      ['輔導員',val('counselor')||'—'],
+      ['關懷員',val('counselor')||'—'],
       ['小天使',radio('angel')],
       ['圓夢計劃',radio('dream')],
       ['五感恩',radio('gratitude')],
-      ['如何得知',radio('source')],
+      ['如何得知',sourceValue()],
     ];
     document.getElementById('summary').innerHTML=
       rows.map(r=>`<div class="r"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
@@ -490,10 +510,10 @@
     // 欄位用中文鍵，方便試算表用標題對應
     const data={
       '姓名':val('fullname'), '綽號':val('nickname'),
-      '身分':radio('studentType'), '輔導員':val('counselor'),
+      '身分':radio('studentType'), '關懷員':val('counselor'),
       '小天使':radio('angel'), '圓夢計劃':radio('dream'),
       '五感恩':radio('gratitude'),
-      '如何得知本活動':radio('source'),
+      '如何得知本活動':sourceValue(),
       '填寫時間':new Date().toLocaleString('zh-TW',{hour12:false})
     };
     try{
@@ -508,6 +528,7 @@
   function restart(){
     document.querySelectorAll('input').forEach(i=>{i.value='';i.checked=false;});
     document.querySelectorAll('.opt').forEach(o=>o.classList.remove('on'));
+    document.getElementById('sourceOtherWrap').style.display='none';
     show(1,'back');
   }
 
